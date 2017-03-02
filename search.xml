@@ -4,6 +4,42 @@
   
     
     <entry>
+      <title><![CDATA[使用Python实现简单抓图]]></title>
+      <url>http://qinshenhui.github.io/2017/03/02/screenshot/</url>
+      <content type="html"><![CDATA[<p>#使用Python实现简单抓图<br>环境:windows7 x64</p>
+<p>##第一种方法:使用PIL库<br>首先安装PIL库,PIL库已经很久没有更新了,而且官网包不支持x64,还需要自己去找x64的包或者更改源码,所以我这里就选择了第三方库–pillow</p>
+<blockquote>
+<p>pip install pillow</p>
+</blockquote>
+<p>等候自动安装完成后,就可以简单的进行全屏截图了,只需要三行代码即可快速实现</p>
+<blockquote>
+<p>from PIL import ImageGrab<br>pic = ImageGrab.grab()<br>pic.save(‘c:\‘)</p>
+</blockquote>
+<p>##第二种方法:调用win32函数</p>
+<blockquote>
+<p>import win32api,win32con,win32gui,win32ui<br>#获取显示屏长宽高及原点坐标<br>height=win32api.GetSystemMetrics(win32con.SM_CYVIRTUALSCREEN)<br>width=win32api.GetSystemMetrics(win32con.SM_CXVIRTUALSCREEN)<br>top=win32api.GetSystemMetrics(win32con.SM_YVIRTUALSCREEN)<br>left=win32api.GetSystemMetrics(win32con.SM_XVIRTUALSCREEN)<br>#获取桌面句柄<br>desktop=win32gui.GetDesktopWindow()<br>#创建设备描述表(Device Context)<br>desktop_dc=win32gui.GetWindowDC(desktop)<br>img_dc=win32ui.CreateDCFromHandle(desktop_dc)<br>#创建内存设备描述表<br>mem_dc=img_dc.CreateCompatibleDC()<br>#创建位图<br>screenshot=win32ui.CreateBitmap()<br>screenshot.CreateCompatibleBitmap(img_dc,width,height)<br>mem_dc.SelectObject(screenshot)<br>#截图到内存设备描述表<br>mem_dc.BitBlt((0,0),(width,height),img_dc,(left,top),win32con.SRCCOPY)<br>#保存图片<br>screenshot.SaveBitmapFile(mem<em>dc,’c:\\windows\\temp\\1.bmp’)<br>#清理现场→</em>→<br>mem_dc.DeleteDC()<br>win32gui.DeleteObject(screenshot.GetHandle())</p>
+</blockquote>
+<p>至此完毕了!</p>
+<blockquote>
+</blockquote>
+]]></content>
+      
+        <categories>
+            
+            <category> 语言学习 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> python </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[mdk3工具使用]]></title>
       <url>http://qinshenhui.github.io/2017/02/26/mdk3%E5%B7%A5%E5%85%B7/</url>
       <content type="html"><![CDATA[<pre><code>“ MDK3 是一款无线DOS 攻击测试工具，能够发起Beacon Flood、Authentication DoS、Deauthentication/Disassociation Amok 等模式的攻击,另外它还具有针对隐藏ESSID 的暴力探测模式、802.1X 渗透测试、WIDS干扰等功能”。
@@ -34,6 +70,12 @@
 <p>That’s all.</p>
 ]]></content>
       
+        <categories>
+            
+            <category> 工具使用 </category>
+            
+        </categories>
+        
         
         <tags>
             
