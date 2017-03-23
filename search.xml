@@ -4,6 +4,30 @@
   
     
     <entry>
+      <title><![CDATA[debug基本用法]]></title>
+      <url>http://qinshenhui.github.io/2017/03/23/debug%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/</url>
+      <content type="html"><![CDATA[<p>#debug的基本用法</p>
+<blockquote>
+<p>r命令,查看修改寄存器的内容<br>d命令,查看内存中内容<br>e命令,修改内存中的内容(可以写入数据指令,在内存中他们并无区别)<br>u命令,将内存内容解释为机器指令和汇编指令<br>t命令,从当前<code>CS:IP</code>处执行一条汇编指令<br>a命令,用汇编指令的形式向内存中写入指令</p>
+</blockquote>
+]]></content>
+      
+        <categories>
+            
+            <category> 汇编 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 汇编 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[使用Python实现简单抓图]]></title>
       <url>http://qinshenhui.github.io/2017/03/02/screenshot/</url>
       <content type="html"><![CDATA[<p>#使用Python实现简单抓图<br>环境:windows7 x64</p>
